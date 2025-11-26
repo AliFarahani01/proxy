@@ -15,12 +15,12 @@
       }
     ]
   },
-  "migrations": [
-    {
-      "tag": "v1",
-      "new_classes": ["WSProxy"]
-    }
-  ],
+ "migrations": [
+  {
+    "tag": "v1",
+    "new_sqlite_classes": ["WSProxy"]
+  }
+],
   "observability": {
     "enabled": true,
     "logs": { "enabled": true, "persist": true },
