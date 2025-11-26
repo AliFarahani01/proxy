@@ -124,6 +124,15 @@ function baseFor(target) {
     return target;
   }
 }
+async function pickWorkingNode(nodes) {
+  for (let n of nodes) {
+    try {
+      const res = await fetch(n, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
+      if (res.ok) return n;
+    } catch(e) { /* ignore */ }
+  }
+  return null;
+}
 
 async function pickFastestNode(nodes) {
   const results = await Promise.all(nodes.map(n => benchNode(n, BENCH_TIMEOUT)));
