@@ -187,3 +187,4 @@ async function handleAdmin(req, url, env) {
   html += `</ul><p>Cache TTL: ${CACHE_TTL}s</p>`;
   return new Response(html, {status:200, headers:{"Content-Type":"text/html"}});
 }
+export { WSProxy };
