@@ -23,9 +23,6 @@
   "routes": [
     // اگر میخوای مسیر خاصی روی دامنه deploy بشه
   ],
-  "bindings": [
-    // هر binding دیگر، مثل KV namespaces یا R2
-  ],
   "build": {
     "upload": {
       "format": "modules"
