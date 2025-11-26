@@ -1,4 +1,4 @@
-import { WSProxy } from './wsproxy.js';
+import { WSProxy } from './WSProxy.js';
 
 
 const NODES = [
