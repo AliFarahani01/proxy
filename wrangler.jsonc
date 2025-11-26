@@ -1,7 +1,7 @@
 {
   "$schema": "https://developers.cloudflare.com/workers/cli-wrangler/workers-schema.json",
   "name": "bepichon",
-  "main": "index.js",
+  "main": "worker.js",
   "compatibility_date": "2025-11-26",
   "vars": {
     "AUTH_TOKEN": "your_auth_token_here",
