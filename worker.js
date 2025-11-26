@@ -1,3 +1,4 @@
+import { WSProxy } from './WSProxy.js';
 export default {
   async fetch(req) {
     const url = new URL(req.url);
@@ -100,3 +101,4 @@ function ui() {
   </body></html>`,
   { headers: {"content-type":"text/html"} });
 }
+export { WSProxy };
