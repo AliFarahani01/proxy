@@ -7,14 +7,14 @@
     "AUTH_TOKEN": "YOUR_SECRET_TOKEN",
     "ADMIN_PASS": "YOUR_ADMIN_PASSWORD"
   },
-  "durable_objects": {
-    "bindings": [
-      {
-        "name": "WS_DO",
-        "class_name": "WSProxy"
-      }
-    ]
-  },
+"durable_objects": {
+  "binding": [
+    {
+      "name": "WS_DO",
+      "class_name": "WSProxy"
+    }
+  ]
+},
   "observability": {
     "enabled": true,
     "logs": { "enabled": true, "persist": true },
