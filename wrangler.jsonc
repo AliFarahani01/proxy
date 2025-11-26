@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developers.cloudflare.com/workers/cli-wrangler/workers-schema.json",
+  "$schema": "https://developers.cloudflare.com/workers/cli-wrangler/config-schema",
   "name": "bepichon",
   "main": "worker.js",
   "compatibility_date": "2025-11-26",
@@ -15,17 +15,15 @@
       }
     ]
   },
-  "triggers": {
-    "crons": [
-      // اگر لازم داری کران تریگر اضافه کن
-    ]
-  },
-  "routes": [
-    // اگر میخوای مسیر خاصی روی دامنه deploy بشه
-  ],
-  "build": {
-    "upload": {
-      "format": "modules"
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_classes": ["WSProxy"]
     }
+  ],
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "persist": true },
+    "traces": { "enabled": true, "persist": true }
   }
 }
