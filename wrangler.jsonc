@@ -1,19 +1,18 @@
 {
   "name": "bepichon",
-  "main": "worker.js",                       // مسیر فایل اصلی Worker
+  "main": "worker.js",
   "compatibility_date": "2025-11-26",
-  "type": "module",
+  "vars": {
+    "AUTH_TOKEN": "YOUR_SECRET_TOKEN",
+    "ADMIN_PASS": "YOUR_ADMIN_PASSWORD"
+  },
   "durable_objects": {
     "bindings": [
       {
-        "name": "WS_DO",                      // برای WebSocket
+        "name": "WS_DO",
         "class_name": "WSProxy"
       }
     ]
-  },
-  "vars": {
-    "AUTH_TOKEN": "YOUR_SECRET_TOKEN",        // توکن احراز هویت
-    "ADMIN_PASS": "YOUR_ADMIN_PASSWORD"       // رمز ادمین
   },
   "observability": {
     "enabled": true,
