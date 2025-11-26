@@ -8,7 +8,7 @@
     "ADMIN_PASS": "your_admin_password_here"
   },
   "durable_objects": {
-    "binding": [
+    "bindings": [
       {
         "name": "WS_DO",
         "class_name": "WSProxy"
