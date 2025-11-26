@@ -3,10 +3,21 @@
   "type": "module",
   "main": "worker.js",
   "compatibility_date": "2025-11-26",
-  "vars": { "AUTH_TOKEN": "...", "ADMIN_PASS": "..." },
+  "vars": {
+    "AUTH_TOKEN": "YOUR_SECRET_TOKEN",
+    "ADMIN_PASS": "YOUR_ADMIN_PASSWORD"
+  },
   "durable_objects": {
     "bindings": [
-      { "name": "WS_DO", "class_name": "WSProxy" }
+      {
+        "name": "WS_DO",
+        "class_name": "WSProxy"
+      }
     ]
+  },
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "persist": true },
+    "traces": { "enabled": true, "persist": true }
   }
 }
