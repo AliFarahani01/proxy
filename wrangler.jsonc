@@ -3,10 +3,6 @@
   "name": "bepichon",
   "main": "worker.js",
   "compatibility_date": "2025-11-26",
-  "vars": {
-    "AUTH_TOKEN": "your_auth_token_here",
-    "ADMIN_PASS": "your_admin_password_here"
-  },
   "durable_objects": {
     "bindings": [
       {
