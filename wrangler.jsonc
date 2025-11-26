@@ -1,35 +1,23 @@
 {
-  "name": "bepichon",                      // نام پروژه
-  "main": "worker.js",                     // مسیر فایل اصلی Worker
-  "compatibility_date": "2025-11-26",     // تاریخ سازگاری
+  "name": "bepichon",
+  "main": "worker.js",                       // مسیر فایل اصلی Worker
+  "compatibility_date": "2025-11-26",
+  "type": "module",
   "durable_objects": {
     "bindings": [
       {
-        "name": "WS_DO",                   // نام binding
-        "class_name": "WSProxy"           // کلاس Durable Object که export شده
+        "name": "WS_DO",                      // برای WebSocket
+        "class_name": "WSProxy"
       }
     ]
   },
   "vars": {
-    "AUTH_TOKEN": "YOUR_SECRET_TOKEN",     // توکن احراز هویت
-    "ADMIN_PASS": "YOUR_ADMIN_PASSWORD"    // رمز عبور ادمین
-  }
-}
-
-{
+    "AUTH_TOKEN": "YOUR_SECRET_TOKEN",        // توکن احراز هویت
+    "ADMIN_PASS": "YOUR_ADMIN_PASSWORD"       // رمز ادمین
+  },
   "observability": {
-    "enabled": false,
-    "head_sampling_rate": 1,
-    "logs": {
-      "enabled": false,
-      "head_sampling_rate": 1,
-      "persist": true,
-      "invocation_logs": true
-    },
-    "traces": {
-      "enabled": true,
-      "persist": true,
-      "head_sampling_rate": 1
-    }
+    "enabled": true,
+    "logs": { "enabled": true, "persist": true },
+    "traces": { "enabled": true, "persist": true }
   }
 }
