@@ -19,5 +19,11 @@
     "enabled": true,
     "logs": { "enabled": true, "persist": true },
     "traces": { "enabled": true, "persist": true }
-  }
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_classes": ["WSProxy"]
+    }
+  ]
 }
