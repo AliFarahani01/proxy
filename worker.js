@@ -8,34 +8,31 @@ const NODES = [
   "https://208.67.222.222/",
   "https://76.76.2.0/"
 ];
-const CACHE_TTL = 20; // ثانیه
-const BENCH_TIMEOUT = 1500; // ms
-const FETCH_TIMEOUT = 25000; // ms
-const MAX_CACHE_BYTES = 2 * 1024 * 1024; // 2MB
+const CACHE_TTL = 20; 
+const BENCH_TIMEOUT = 1500; 
+const FETCH_TIMEOUT = 25000; 
+const MAX_CACHE_BYTES = 2 * 1024 * 1024;
 
 // ----------------- Entry Point -----------------
 export default {
   async fetch(req, env, ctx) {
     const url = new URL(req.url);
 
-    // Admin dashboard
-    if (url.searchParams.has("admin")) return handleAdmin(req, url, env);
+    // Admin dashboard (بدون رمز)
+    if (url.searchParams.has("admin")) 
+        return handleAdmin(req, url, env);
 
-    // WebSocket upgrade -> Durable Object
+    // WebSocket upgrade
     if (url.searchParams.has("ws")) {
       const id = env.WS_DO.idFromName(url.toString());
       const obj = env.WS_DO.get(id);
       return obj.fetch(req);
     }
 
-    // UI if no ?url
-    if (!url.searchParams.has("url")) return uiPage(env);
+    // UI
+    if (!url.searchParams.has("url")) return uiPage();
 
-    // Auth
-    const token = env.AUTH_TOKEN || "";
-    const provided = url.searchParams.get("t") || req.headers.get("x-auth-token") || "";
-    if (!token || provided !== token) return new Response("Unauthorized", { status: 401 });
-
+    // بدون نیاز به توکن یا رمز
     const target = normalizeUrl(decodeURIComponent(url.searchParams.get("url")));
     const method = req.method.toUpperCase();
     const cacheKey = `bepichon::${target}::${method}`;
@@ -60,7 +57,6 @@ export default {
     headers.set("Via", "bepichon");
     if (node) headers.set("X-Node", node);
 
-    // HTML rewrite + JS injection
     const contentType = headers.get("content-type") || "";
     if (contentType.includes("text/html")) {
       const html = await resp.text();
@@ -80,7 +76,7 @@ export default {
       return new Response(buffer, { status: resp.status, headers });
     }
 
-    // Binary passthrough
+    // Binary
     const buffer = await resp.arrayBuffer();
     if (method === "GET" && buffer.byteLength <= MAX_CACHE_BYTES) {
       const respCache = new Response(buffer, {
@@ -119,7 +115,6 @@ function baseFor(target) {
   }
 }
 
-/* Node benchmarking */
 async function pickFastestNode(nodes) {
   const results = await Promise.all(nodes.map(n => benchNode(n, BENCH_TIMEOUT)));
   let best = nodes[0], bestTime = Infinity;
@@ -133,11 +128,11 @@ async function benchNode(node, timeout) {
   catch { clearTimeout(id); return Infinity; }
 }
 
-/* Proxy fetch */
 async function proxyFetch(req, target, node) {
   const headers = new Headers();
   req.headers.forEach((v,k)=>{ 
-    if(!["host","content-length","connection","upgrade-insecure-requests"].includes(k.toLowerCase())) headers.set(k,v); 
+    if(!["host","content-length","connection","upgrade-insecure-requests"].includes(k.toLowerCase())) 
+        headers.set(k,v); 
   });
   headers.set("Via","bepichon");
   if(node) headers.set("X-Node", node);
@@ -150,7 +145,6 @@ function fetchWithTimeout(url, opts, timeout) {
   return fetch(url, opts).finally(()=>clearTimeout(id));
 }
 
-/* HTML rewrite + JS injector */
 function rewriteHTML(html, base) {
   html = html.replace(/(href|src|action)=["']([^"']+)["']/gi,(m,a,u)=>`${a}="${resourceProxy(u,base)}"`);
   html = html.replace(/url\(([^)]+)\)/gi,(m,u)=>`url(${resourceProxy(u.replace(/^['"]|['"]$/g,''),base)})`);
@@ -162,29 +156,28 @@ function resourceProxy(u, base) {
   if(/^\s*\//.test(u)) return `?url=${encodeURIComponent(base+u)}`;
   return `?url=${encodeURIComponent(base+"/"+u)}`;
 }
+
 function injectJS() {
-  return `<script>(function(){const F=window.fetch.bind(window);window.fetch=(u,o)=>{if(typeof u==='string')u=u.startsWith('http')?u:location.origin+(u.startsWith('/')?u:'/'+u);return F('?url='+encodeURIComponent(u),o);};const X=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u){if(typeof u==='string'&&!u.startsWith('http'))u=location.origin+(u.startsWith('/')?u:'/'+u);arguments[1]='?url='+encodeURIComponent(u);return X.apply(this,arguments);};const W=window.WebSocket;window.WebSocket=function(u){try{return new W('?ws='+btoa(u));}catch(e){return new W(u);}};})();</script>`;
+  return `<script>(function(){const F=window.fetch.bind(window);window.fetch=(u,o)=>{if(typeof u==='string')u=u.startsWith('http')?u:location.origin+(u.startsWith('/')?u:'/'+u);return F('?url='+encodeURIComponent(u),o);};const X=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u){if(typeof u==='string'&&!u.startsWith('http'))u=location.origin+(u.startsWith('/')?u:'/'+u);arguments[1]='?url='+encodeURIComponent(u);return X.apply(this,arguments);};})();</script>`;
 }
 
 /* UI */
-function uiPage(env) {
+function uiPage() {
   const html=`<!doctype html><html><head><meta charset="utf-8"><title>bepichon</title>
   <style>body{background:#111;color:#0f0;font-family:monospace;text-align:center;padding-top:40px}input{width:60%;padding:10px;margin:5px;border-radius:6px;border:1px solid #0f0;background:#000;color:#0f0}button{padding:10px 16px;border:none;background:#0f0;color:#000;border-radius:6px;cursor:pointer}iframe{width:98%;height:70vh;margin-top:20px;border-radius:6px;border:none}</style></head><body>
   <h1>bepichon</h1><input id="u" placeholder="https://example.com"><button onclick="go()">GO</button><iframe id="fr"></iframe>
-  <script>function go(){let u=document.getElementById('u').value;if(!u) return;if(!u.startsWith('http')) u='http://'+u;document.getElementById('fr').src='?url='+encodeURIComponent(u)+'&t=${env.AUTH_TOKEN||""}';}</script></body></html>`;
+  <script>function go(){let u=document.getElementById('u').value;if(!u)return;if(!u.startsWith('http'))u='http://'+u;document.getElementById('fr').src='?url='+encodeURIComponent(u);} </script>
+  </body></html>`;
   return new Response(html, { status:200, headers:{"Content-Type":"text/html; charset=utf-8","Access-Control-Allow-Origin":"*"}});
 }
 
-/* Admin */
+/* Admin بدون رمز */
 async function handleAdmin(req, url, env) {
-  const pass = url.searchParams.get("pass") || req.headers.get("x-admin-pass") || "";
-  const ADMIN_PASS_VAL = env.ADMIN_PASS || "";
-  if (!ADMIN_PASS_VAL || pass !== ADMIN_PASS_VAL) return new Response("<h3>Admin: provide pass ?admin&pass=</h3>", {status:401, headers:{"Content-Type":"text/html"}});
-
   const nodesStats = await Promise.all(NODES.map(async n => ({ node:n, t:await benchNode(n,BENCH_TIMEOUT) })));
   let html = `<h2>bepichon - Admin</h2><ul>`;
   nodesStats.forEach(n => html += `<li>${n.node} - ${n.t===Infinity?"timeout":n.t+"ms"}</li>`);
   html += `</ul><p>Cache TTL: ${CACHE_TTL}s</p>`;
   return new Response(html, {status:200, headers:{"Content-Type":"text/html"}});
 }
+
 export { WSProxy };
