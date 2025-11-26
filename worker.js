@@ -1,4 +1,4 @@
-
+import { WSProxy } from './WSProxy.js';
 const NODES = [
   "https://1.1.1.1/",
   "https://8.8.8.8/",
