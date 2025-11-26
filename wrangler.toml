@@ -1,7 +1,0 @@
-name = "bepichon"
-main = "worker.js"  # نام فایل اصلی Worker
-compatibility_date = "2025-11-26"
-
-[[durable_objects]]
-name = "WS_DO"       # نام Binding
-class_name = "WSProxy"  # کلاس Durable Object

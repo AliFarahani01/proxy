@@ -1,0 +1,17 @@
+{
+  "name": "bepichon",                      // نام پروژه
+  "main": "worker.js",                     // مسیر فایل اصلی Worker
+  "compatibility_date": "2025-11-26",     // تاریخ سازگاری
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "WS_DO",                   // نام binding
+        "class_name": "WSProxy"           // کلاس Durable Object که export شده
+      }
+    ]
+  },
+  "vars": {
+    "AUTH_TOKEN": "YOUR_SECRET_TOKEN",     // توکن احراز هویت
+    "ADMIN_PASS": "YOUR_ADMIN_PASSWORD"    // رمز عبور ادمین
+  }
+}
