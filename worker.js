@@ -1,34 +1,3 @@
-export class WSProxy {
-  constructor(state, env) {
-    this.state = state;
-    this.sockets = new Set();
-  }
-
-  async fetch(req) {
-    // WebSocket upgrade
-    if (req.headers.get("Upgrade") !== "websocket") {
-      return new Response("WebSocket required", { status: 400 });
-    }
-    const [client, server] = Object.values(new WebSocketPair());
-    const url = new URL(req.url);
-    const targetUrl = decodeURIComponent(url.searchParams.get("url"));
-    
-    this.sockets.add(client);
-
-    client.addEventListener("message", evt => {
-      try { server.send(evt.data); } catch {}
-    });
-    server.addEventListener("message", evt => {
-      try { client.send(evt.data); } catch {}
-    });
-
-    const cleanup = () => this.sockets.delete(client);
-    client.addEventListener("close", cleanup);
-    server.addEventListener("close", cleanup);
-
-    return new Response(null, { status: 101, webSocket: client });
-  }
-}
 
 const NODES = [
   "https://1.1.1.1/",
@@ -52,11 +21,12 @@ async function handleRequest(req) {
   if (url.searchParams.has("admin")) return handleAdmin(req, url);
 
   // WebSocket upgrade -> Durable Object
-  if (url.searchParams.has("ws")) {
-    const id = WS_DO.idFromName(url.toString());
-    const obj = WS_DO.get(id);
-    return obj.fetch(req);
-  }
+
+if (url.searchParams.has("ws")) {
+  const id = WS_DO.idFromName(url.toString());
+  const obj = WS_DO.get(id);
+  return obj.fetch(req);
+}
 
   // UI if no ?url
   if (!url.searchParams.has("url")) return uiPage();
