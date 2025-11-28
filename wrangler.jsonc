@@ -3,6 +3,7 @@
   "name": "bepichon",
   "main": "worker.js",
   "compatibility_date": "2025-11-26",
+  
   "durable_objects": {
     "bindings": [
       {
@@ -11,15 +12,30 @@
       }
     ]
   },
- "migrations": [
-  {
-    "tag": "v1",
-    "new_sqlite_classes": ["WSProxy"]
-  }
-],
+
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["WSProxy"]
+    }
+  ],
+
   "observability": {
     "enabled": true,
     "logs": { "enabled": true, "persist": true },
     "traces": { "enabled": true, "persist": true }
+  },
+
+  "bindings": {
+    "DNS_KV": {
+      "type": "kv_namespace",
+      "binding": "DNS_KV",
+      "id": "replace-with-your-kv-id"
+    },
+    "LOG_KV": {
+      "type": "kv_namespace",
+      "binding": "LOG_KV",
+      "id": "replace-with-your-log-kv-id"
+    }
   }
 }
