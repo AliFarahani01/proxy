@@ -1,4 +1,4 @@
-import { WSProxy } from './WSProxy.js';
+import { WSProxy } from '.WSProxy.js';
 
 const DNS_RAW_URL = "https://raw.githubusercontent.com/AliFarahani01/proxy/refs/heads/main/dns.text";
 const DNS_CACHE_KEY = "bepichon:dnslist";
