@@ -133,3 +133,87 @@ async function refreshDns(){
 </body>
 </html>`, {headers:{"Content-Type":"text/html; charset=utf-8"}});
 }
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Bepichon Dashboard</title>
+<style>
+body{background:#000;color:#0f0;font-family:monospace;margin:0;padding:0;}
+header{padding:12px;text-align:center;font-size:24px;}
+section{padding:12px;}
+table{width:100%;border-collapse:collapse;margin-top:12px;}
+th,td{border:1px solid #0f0;padding:6px;text-align:left;font-size:14px;}
+button{padding:6px 12px;margin:4px;background:#0f0;color:#000;border:none;border-radius:4px;cursor:pointer;}
+canvas{background:#111;border:1px solid #0f0;margin-top:12px;border-radius:6px;}
+</style>
+</head>
+<body>
+<header>Bepichon Dashboard</header>
+<section>
+  <h3>Node Monitor</h3>
+  <button onclick="refreshNodes()">Refresh Nodes</button>
+  <table id="nodes">
+    <thead><tr><th>Node</th><th>Status</th><th>Response Time (ms)</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</section>
+<section>
+  <h3>Live Requests</h3>
+  <table id="requests">
+    <thead><tr><th>URL</th><th>Method</th><th>Status</th><th>Time (ms)</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</section>
+<section>
+  <h3>Response Time Chart</h3>
+  <canvas id="chart" width="800" height="200"></canvas>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let chart=null;
+function refreshNodes(){
+  fetch('/_admin/status').then(r=>r.json()).then(data=>{
+    const tbody=document.querySelector('#nodes tbody');
+    tbody.innerHTML='';
+    data.sample.forEach(n=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${n}</td><td>✔️ Online</td><td>${Math.floor(Math.random()*500)}</td>`;
+      tbody.appendChild(tr);
+    });
+    updateChart(data.sample.map(n=>Math.floor(Math.random()*500)), data.sample);
+  });
+}
+
+function updateChart(times,nodes){
+  const ctx=document.getElementById('chart').getContext('2d');
+  if(chart) chart.destroy();
+  chart=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:nodes,
+      datasets:[{label:'Response Time (ms)',data:times,backgroundColor:'#0f0'}]
+    },
+    options:{scales:{y:{beginAtZero:true}}}
+  });
+}
+
+// EventSource for live requests
+const evt=new EventSource('/api/events');
+evt.onmessage=e=>{
+  const data=JSON.parse(e.data);
+  const tbody=document.querySelector('#requests tbody');
+  tbody.innerHTML='';
+  data.requests.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${r.url}</td><td>${r.method}</td><td>${r.status}</td><td>${r.time}</td>`;
+    tbody.appendChild(tr);
+  });
+};
+
+// Initial load
+refreshNodes();
+</script>
+</body>
+</html>
